@@ -28,4 +28,8 @@
  
 <img width="299" alt="image" src="https://github.com/user-attachments/assets/35a283cf-53f2-4963-b2b7-57708f2b5255">
 
+## Download
+
+[download](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.0/DarkModeWallpaper-1.0.0.zip)
+
 
