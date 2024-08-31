@@ -4,7 +4,7 @@
 	</a>
 	<h1>DarkMode Wallpaper for Mac</h1>
 	<p>
-		<b>Automatically switch wallpaper folder in dark mode</b>
+		<b>深色模式下自动切换壁纸</b>
 	</p>
 	<br>
 	<br>
