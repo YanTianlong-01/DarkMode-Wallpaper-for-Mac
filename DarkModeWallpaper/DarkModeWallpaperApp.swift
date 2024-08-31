@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openWebsite() {
-        if let url = URL(string: "https://www.github.com") {
+        if let url = URL(string: "https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac") {
             NSWorkspace.shared.open(url)
         }
     }

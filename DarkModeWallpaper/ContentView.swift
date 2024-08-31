@@ -9,16 +9,18 @@ import SwiftUI
 import AppKit
 
 struct ContentView: View {
+    @AppStorage("LightModefloderURL") private var LightModefloderURLString: String?
+    @AppStorage("DarkModefloderURL") private var DarkModefloderURLString: String?
+    @AppStorage("Interval") private var interval: TimeInterval = 1800
     
     @State private var LightshowFolderPicker = false
     @State private var DarkshowFolderPicker = false
     @State private var DarkModeimageURLs: [URL] = []
     @State private var LightModeimageURLs: [URL] = []
-    @State private var DarkModefloderURL: URL? = nil
-    @State private var LightModefloderURL: URL? = nil
+    @State private var DarkModefloderURL: URL?
+    @State private var LightModefloderURL: URL?
     @State private var imageURLs: [URL] = []
-    //@State private var timer: Timer?
-    @State private var interval: TimeInterval = 1800 // 默认间隔时间为 30分钟
+    //@State private var interval: TimeInterval = 1800 // 默认间隔时间为 30分钟
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var countNum: Int = 1800
     @Environment(\.colorScheme) var colorScheme
@@ -121,6 +123,29 @@ struct ContentView: View {
                 Text("Reset Timer")
             }
         }.padding()
+        
+        .onAppear {
+            // Load saved URLs from UserDefaults
+            if let urlString = LightModefloderURLString, let url = URL(string: urlString) {
+                LightModefloderURL = url
+                LightModeimageURLs = getImagesFromFolder(url: url)
+            }
+
+            if let urlString = DarkModefloderURLString, let url = URL(string: urlString) {
+                DarkModefloderURL = url
+                DarkModeimageURLs = getImagesFromFolder(url: url)
+            }
+
+            countNum = Int(interval) // Initialize countNum with the saved interval
+        }
+        .onChange(of: LightModefloderURL) { newValue in
+            // Save LightModefloderURL to UserDefaults
+            LightModefloderURLString = newValue?.absoluteString
+        }
+        .onChange(of: DarkModefloderURL) { newValue in
+            // Save DarkModefloderURL to UserDefaults
+            DarkModefloderURLString = newValue?.absoluteString
+        }
         
     }
     
