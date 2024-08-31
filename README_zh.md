@@ -28,7 +28,7 @@
 
 ## 下载App
 [下载](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.0/DarkModeWallpaper-1.0.0.zip)
-
+推荐系统：macOS14
 
 
 
