@@ -3,29 +3,26 @@
 //  DarkModeWallpaper
 //
 //  Created by 严天龙 on 2024/8/31.
-//
+//  v1.0.1 与 v1.0.0 一样
 
 import SwiftUI
 import AppKit
 
 struct ContentView: View {
-    @AppStorage("LightModefloderURL") private var LightModefloderURLString: String?
-    @AppStorage("DarkModefloderURL") private var DarkModefloderURLString: String?
-    @AppStorage("Interval") private var interval: TimeInterval = 1800
     
     @State private var LightshowFolderPicker = false
     @State private var DarkshowFolderPicker = false
     @State private var DarkModeimageURLs: [URL] = []
     @State private var LightModeimageURLs: [URL] = []
-    @State private var DarkModefloderURL: URL?
-    @State private var LightModefloderURL: URL?
+    @State private var DarkModefloderURL: URL? = nil
+    @State private var LightModefloderURL: URL? = nil
     @State private var imageURLs: [URL] = []
-    //@State private var interval: TimeInterval = 1800 // 默认间隔时间为 30分钟
+    @State private var interval: TimeInterval = 1800 // 默认间隔时间为 30分钟
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var countNum: Int = 1800
     @Environment(\.colorScheme) var colorScheme
-    
-    
+    @State private var syncDesktops: Bool = false
+
     
     var body: some View {
         HStack{
@@ -47,8 +44,20 @@ struct ContentView: View {
                             print("Error selecting folder \(error.localizedDescription)")
                         case .success(let url):
                             print("selected light mode folder url = \(url)")
-                            LightModefloderURL = url
-                            LightModeimageURLs = getImagesFromFolder(url: url)
+                            
+                            let panel = NSOpenPanel()
+                            panel.canChooseDirectories = true
+                            panel.canChooseFiles = false
+                            panel.allowsMultipleSelection = false
+                            panel.message = "Please grant access to this folder for Light Mode."
+                            if panel.runModal() == .OK {
+                                if let url = panel.url {
+                                    // 这里可以处理选择的文件夹
+                                    LightModefloderURL = url
+                                    print("Selected folder: \(url)")
+                                }
+                            }
+                            //LightModefloderURL = url
                         }
                     })
                     if let url = LightModefloderURL {
@@ -76,8 +85,19 @@ struct ContentView: View {
                             print("Error selecting folder \(error.localizedDescription)")
                         case .success(let url):
                             print("selected dark mode folder url = \(url)")
-                            DarkModefloderURL = url
-                            DarkModeimageURLs = getImagesFromFolder(url: url)
+                            let panel = NSOpenPanel()
+                            panel.canChooseDirectories = true
+                            panel.canChooseFiles = false
+                            panel.allowsMultipleSelection = false
+                            panel.message = "Please grant access to this folder for Dark Mode."
+                            if panel.runModal() == .OK {
+                                if let url = panel.url {
+                                    // 这里可以处理选择的文件夹
+                                    DarkModefloderURL = url
+                                    print("Selected folder: \(url)")
+                                }
+                            }
+                            //DarkModefloderURL = url
                         }
                     })
                     if let url = DarkModefloderURL {
@@ -102,16 +122,23 @@ struct ContentView: View {
                 Text("seconds")
             }
             
-            Text("\(countNum) seconds left to change the wallpaper")
-                .onReceive(timer) { input in
+            //Text("\(countNum) seconds left to change the wallpaper")
+            Text("seconds left to change the wallpaper")
+                .onReceive(timer) { _ in
                     if countNum > 0{
                         countNum -= 1
-                    } else if countNum == 0{
+                    }else{
                         countNum = Int(interval)
                         if colorScheme == .dark{
-                            setRandomDesktopImage(from: DarkModeimageURLs)
+                            if let url = DarkModefloderURL{
+                                DarkModeimageURLs = getImagesFromFolder(url: url)
+                                setRandomDesktopImage(from: DarkModeimageURLs)
+                            }
                         }else {
-                            setRandomDesktopImage(from: LightModeimageURLs)
+                            if let url = LightModefloderURL{
+                                LightModeimageURLs = getImagesFromFolder(url: url)
+                                setRandomDesktopImage(from: LightModeimageURLs)
+                            }
                         }
                         
                     }
@@ -124,50 +151,24 @@ struct ContentView: View {
             }
         }.padding()
         
-        .onAppear {
-            // Load saved URLs from UserDefaults
-            if let urlString = LightModefloderURLString, let url = URL(string: urlString) {
-                LightModefloderURL = url
-                LightModeimageURLs = getImagesFromFolder(url: url)
-            }
-
-            if let urlString = DarkModefloderURLString, let url = URL(string: urlString) {
-                DarkModefloderURL = url
-                DarkModeimageURLs = getImagesFromFolder(url: url)
-            }
-
-            countNum = Int(interval) // Initialize countNum with the saved interval
-        }
-        .onChange(of: LightModefloderURL) { newValue in
-            // Save LightModefloderURL to UserDefaults
-            LightModefloderURLString = newValue?.absoluteString
-        }
-        .onChange(of: DarkModefloderURL) { newValue in
-            // Save DarkModefloderURL to UserDefaults
-            DarkModefloderURLString = newValue?.absoluteString
-        }
+        Toggle("Show the same wallpaper on every display", isOn: $syncDesktops)
+        .onChange(of: syncDesktops) { value in
+            // 在这里处理开关状态改变
+            print("Switch is now \(value ? "on" : "off")")
+        }.padding()
         
+    
     }
     
+    
     func getImagesFromFolder(url: URL) -> [URL] {
-        let openPanel = NSOpenPanel()
-        openPanel.canChooseFiles = false
-        openPanel.canChooseDirectories = true
-        openPanel.allowsMultipleSelection = false
-        openPanel.directoryURL = url
-        openPanel.message = "Please grant access to this folder to select a wallpaper."
-
-        if openPanel.runModal() == .OK {
-            if let selectedURL = openPanel.url {
-                do {
-                    let fileURLs = try FileManager.default.contentsOfDirectory(at: selectedURL, includingPropertiesForKeys: nil)
-                    return fileURLs.filter { $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "png" || $0.pathExtension.lowercased() == "tiff" }
-                } catch {
-                    print(error)
-                }
-            }
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+            return fileURLs.filter { $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "png" || $0.pathExtension.lowercased() == "tiff" }
+        } catch {
+            print(error)
+            return [] // 出错时返回空数组
         }
-        return []
     }
     
     func setRandomDesktopImage(from imageURLs: [URL]) {
@@ -178,14 +179,22 @@ struct ContentView: View {
     
     func setDesktopImage(url: URL) {
         do {
-            if let screen = NSScreen.main {
-                try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
+                    if syncDesktops{
+                let screens = NSScreen.screens // 获取所有屏幕
+                for screen in screens {
+                    // print(screen)
+                    try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
+                }
+            }else{
+                if let screen = NSScreen.main {
+                    print(screen)
+                    try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
+                }
             }
         } catch {
             print("Error setting desktop image: \(error)")
         }
     }
-    
     
 }
 

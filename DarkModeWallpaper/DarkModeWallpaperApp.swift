@@ -6,6 +6,7 @@
 //
 
 
+
 import SwiftUI
 
 @main
@@ -14,7 +15,7 @@ struct DarkModeWallpaperApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }
@@ -60,7 +61,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             window.title = "DarkMode Wallpaper"
             window.setContentSize(NSSize(width: 400, height: 400))
             window.styleMask = [.titled, .closable, .resizable, .miniaturizable]
-            window.isReleasedWhenClosed = false
+            window.isReleasedWhenClosed = false // 窗口关闭后不会释放，可以重新打开
             
             preferencesWindow = NSWindowController(window: window)
         }
