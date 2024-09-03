@@ -31,6 +31,6 @@
 ## Download
 
 - [download](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.3/DarkModeWallpaper-1.0.3.zip)
-- Recommendation System: macOS 14
+- Recommended System: macOS 14
 
 
