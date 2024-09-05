@@ -26,7 +26,8 @@
 - The App will use Folder A as the wallpaper folder in Light Mode and Folder B in Dark Mode.
 - Users can set the update frequency, and the App will randomly select an image from the specified folder to use as the wallpaper.
  
-<img width="299" alt="image" src="https://github.com/user-attachments/assets/35a283cf-53f2-4963-b2b7-57708f2b5255">
+<img width="307" alt="image" src="https://github.com/user-attachments/assets/12ab0d27-12a2-4ba1-8cff-6a1347b09405">
+
 
 ## Download
 
