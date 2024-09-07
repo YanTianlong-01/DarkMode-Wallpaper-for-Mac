@@ -20,7 +20,7 @@
 
 ## Requirement Analysis
 - I am looking for a wallpaper app that uses only low-brightness images as wallpapers in Dark Mode, and high-brightness images in Light Mode.
-- I found an app called Umbra ([https://replay.software/umbra]), which allows setting different wallpapers for Dark and Light Modes. However, this app only lets you set a single image as the wallpaper, unlike macOS's built-in wallpaper feature, which can randomly select images from a folder.
+- I found an app called [Umbra](https://replay.software/umbra), which allows setting different wallpapers for Dark and Light Modes. However, this app only lets you set a single image as the wallpaper, unlike macOS's built-in wallpaper feature, which can randomly select images from a folder.
 
 ## Features
 - The App will use Folder A as the wallpaper folder in Light Mode and Folder B in Dark Mode.
@@ -30,8 +30,11 @@
 
 
 ## Download
-
 - [download](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.3/DarkModeWallpaper-1.0.3.zip)
 - Recommended System: macOS 14
+
+
+## Other Solutions
+- Use the [dynamicwallpaper website](https://dynamicwallpaper.club/create) to generate dynamic images, [tutorial video](https://youtu.be/dmvW_wLskD0?si=A4tza93hGQxYig8a). The advantage is that you don't need to download any apps, and you can use macOS's native wallpaper settings directly. The downside is that you can only use one image, rather than all the images in a folder.
 
 
