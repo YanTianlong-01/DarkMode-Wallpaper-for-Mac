@@ -30,5 +30,6 @@
 - [下载](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.3/DarkModeWallpaper-1.0.3.zip)
 - 推荐系统：macOS 14
 
-
+## 其他解决方案
+- 使用[dynamicwallpaper网站](https://dynamicwallpaper.club/create)生成动态图片，[教程视频](https://youtu.be/dmvW_wLskD0?si=A4tza93hGQxYig8a)。优点是无需下载任何应用，直接用macOS的原生壁纸设置。缺点是也只能使用一张图片，而不是一个文件夹里面的所有图片。
 
