@@ -14,15 +14,78 @@ struct ContentView: View {
     @State private var DarkshowFolderPicker = false
     @State private var DarkModeimageURLs: [URL] = []
     @State private var LightModeimageURLs: [URL] = []
-    @State private var DarkModefloderURL: URL? = nil
-    @State private var LightModefloderURL: URL? = nil
+    //@State private var DarkModefloderURL: URL? = nil
+    //@State private var LightModefloderURL: URL? = nil
     @State private var imageURLs: [URL] = []
-    @State private var interval: TimeInterval = 1800 // 默认间隔时间为 30分钟
+    //@State private var interval: TimeInterval = 1800 // 默认间隔时间为 30分钟
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var countNum: Int = 1800
     @Environment(\.colorScheme) var colorScheme
-    @State private var syncDesktops: Bool = false
+    //@State private var syncDesktops: Bool = false
 
+    func saveBookmark(for url: URL, key: String) {
+        do {
+            let bookmarkData = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+            UserDefaults.standard.set(bookmarkData, forKey: key)
+        } catch {
+            print("Failed to save bookmark: \(error)")
+        }
+    }
+
+
+    func restoreBookmark(key: String) -> URL? {
+        guard let bookmarkData = UserDefaults.standard.data(forKey: key) else { return nil }
+        do {
+            var isStale = false
+            let url = try URL(resolvingBookmarkData: bookmarkData, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
+            if isStale {
+                // Bookmark data is stale, you might want to ask the user to choose the folder again
+                print("Bookmark is stale")
+                return nil
+            }
+            _ = url.startAccessingSecurityScopedResource()
+            return url
+        } catch {
+            print("Failed to restore bookmark: \(error)")
+            return nil
+        }
+    }
+
+    @State private var LightModeFolderURL: URL? {
+        didSet {
+            if let url = LightModeFolderURL {
+                // UserDefaults.standard.set(url.absoluteString, forKey: "LightModeFolderURL")
+                saveBookmark(for: url, key: "LightModeFolderBookmark")
+            }
+        }
+    }
+    @State private var DarkModeFolderURL: URL? {
+        didSet {
+            if let url = DarkModeFolderURL {
+                // UserDefaults.standard.set(url.absoluteString, forKey: "DarkModeFolderURL")
+                saveBookmark(for: url, key: "DarkModeFolderBookmark")
+            }
+        }
+    }
+    @State private var interval: Int = 1800 {
+        didSet {
+            UserDefaults.standard.set(interval, forKey: "Interval")
+        }
+    }
+    @State private var syncDesktops: Bool  = false {
+        didSet {
+            UserDefaults.standard.set(syncDesktops, forKey: "SyncDesktops")
+        }
+    }
+
+    init() {
+        if let lightModeURL = restoreBookmark(key: "LightModeFolderBookmark") {
+            self._LightModeFolderURL = State(initialValue: lightModeURL)
+        }
+        if let darkModeURL = restoreBookmark(key: "DarkModeFolderBookmark") {
+            self._DarkModeFolderURL = State(initialValue: darkModeURL)
+        }
+    }
     
     var body: some View {
         HStack{
@@ -53,14 +116,14 @@ struct ContentView: View {
                             if panel.runModal() == .OK {
                                 if let url = panel.url {
                                     // 这里可以处理选择的文件夹
-                                    LightModefloderURL = url
+                                    LightModeFolderURL = url
                                     print("Selected folder: \(url)")
                                 }
                             }
                             //LightModefloderURL = url
                         }
                     })
-                    if let url = LightModefloderURL {
+                    if let url = LightModeFolderURL {
                         Text("\(url.lastPathComponent)")
                     } else {
                         Text("Light Mode Folder Not Selected")
@@ -93,14 +156,14 @@ struct ContentView: View {
                             if panel.runModal() == .OK {
                                 if let url = panel.url {
                                     // 这里可以处理选择的文件夹
-                                    DarkModefloderURL = url
+                                    DarkModeFolderURL = url
                                     print("Selected folder: \(url)")
                                 }
                             }
                             //DarkModefloderURL = url
                         }
                     })
-                    if let url = DarkModefloderURL {
+                    if let url = DarkModeFolderURL {
                         Text("\(url.lastPathComponent)")
                     } else {
                         Text("Dark Mode Folder Not Selected")
@@ -112,13 +175,22 @@ struct ContentView: View {
         }.padding()
         
         
-        
+
         VStack{
             // 添加一个 TextField 用于设置时间间隔
             HStack {
                 Text("Change Interval:")
                 TextField("Interval", value: $interval, formatter: NumberFormatter())
                     .frame(width: 100)
+                // 保存和加载时间间隔
+                    .onAppear {
+                        if let savedInterval = UserDefaults.standard.value(forKey: "interval") as? Int {
+                            interval = savedInterval
+                        }
+                    }
+                    .onChange(of: interval) { newValue in
+                        UserDefaults.standard.setValue(newValue, forKey: "interval")
+                    }
                 Text("seconds")
             }
             
@@ -128,14 +200,14 @@ struct ContentView: View {
                     if countNum > 0{
                         countNum -= 1
                     }else{
-                        countNum = Int(interval)
+                        countNum = interval
                         if colorScheme == .dark{
-                            if let url = DarkModefloderURL{
+                            if let url = DarkModeFolderURL{
                                 DarkModeimageURLs = getImagesFromFolder(url: url)
                                 setRandomDesktopImage(from: DarkModeimageURLs)
                             }
                         }else {
-                            if let url = LightModefloderURL{
+                            if let url = LightModeFolderURL{
                                 LightModeimageURLs = getImagesFromFolder(url: url)
                                 setRandomDesktopImage(from: LightModeimageURLs)
                             }
@@ -152,9 +224,14 @@ struct ContentView: View {
         }.padding()
         
         Toggle("Show the same wallpaper on every display", isOn: $syncDesktops)
+        .onAppear {
+            if let savedsyncDesktops = UserDefaults.standard.value(forKey: "syncDesktops") as? Bool {
+                syncDesktops = savedsyncDesktops
+            }
+        }
         .onChange(of: syncDesktops) { value in
-            // 在这里处理开关状态改变
             print("Switch is now \(value ? "on" : "off")")
+            UserDefaults.standard.setValue(value, forKey: "syncDesktops")
         }.padding()
         
     
@@ -179,7 +256,7 @@ struct ContentView: View {
     
     func setDesktopImage(url: URL) {
         do {
-                    if syncDesktops{
+            if syncDesktops{
                 let screens = NSScreen.screens // 获取所有屏幕
                 for screen in screens {
                     // print(screen)
@@ -187,7 +264,6 @@ struct ContentView: View {
                 }
             }else{
                 if let screen = NSScreen.main {
-                    print(screen)
                     try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
                 }
             }
