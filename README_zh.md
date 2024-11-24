@@ -23,8 +23,9 @@
 ## 功能
 - 本App在浅色模式下，会将文件夹A作为壁纸文件夹，在深色模式下，会将文件夹B作为壁纸文件夹。
 - 用户可以设置更新频率，App会随机从指定文件夹中选择一张图片作为壁纸。
+- 允许手动切换壁纸，并且可以自定义快捷键
  
-<img width="307" alt="image" src="https://github.com/user-attachments/assets/12ab0d27-12a2-4ba1-8cff-6a1347b09405">
+<img width="307" alt="image" src="https://github.com/user-attachments/assets/88696d6e-4e27-447d-9847-d5c2c7e69392">
 
 ## 下载App
 - [下载](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.4/DarkModeWallpaper-1.0.4.zip)
