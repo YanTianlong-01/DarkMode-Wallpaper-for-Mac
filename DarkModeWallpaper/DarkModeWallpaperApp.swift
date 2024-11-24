@@ -59,7 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let hostingController = NSHostingController(rootView: contentView)
             let window = NSWindow(contentViewController: hostingController)
             window.title = "DarkMode Wallpaper"
-            window.setContentSize(NSSize(width: 400, height: 400))
+            window.setContentSize(NSSize(width: 400, height: 600))
             window.styleMask = [.titled, .closable, .resizable, .miniaturizable]
             window.isReleasedWhenClosed = false // 窗口关闭后不会释放，可以重新打开
             

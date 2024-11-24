@@ -22,6 +22,61 @@ struct ContentView: View {
     @State private var countNum: Int = 1800
     @Environment(\.colorScheme) var colorScheme
     //@State private var syncDesktops: Bool = false
+    @State private var resetShortcutKey: Character = "r"
+    @State private var selectedModifier: ShortcutModifier = .command {
+        didSet {
+            saveShortcutPreferences()
+        }
+    }
+
+    // Add custom enum for modifier keys
+    enum ShortcutModifier: Int, Hashable {
+        case command
+        case option
+        case shift
+        case control
+        case commandOption
+        case commandShift
+        case commandControl
+        
+        var eventModifiers: EventModifiers {
+            switch self {
+            case .command:
+                return .command
+            case .option:
+                return .option
+            case .shift:
+                return .shift
+            case .control:
+                return .control
+            case .commandOption:
+                return .command.union(.option)
+            case .commandShift:
+                return .command.union(.shift)
+            case .commandControl:
+                return .command.union(.control)
+            }
+        }
+        
+        var symbol: String {
+            switch self {
+            case .command:
+                return "⌘"
+            case .option:
+                return "⌥"
+            case .shift:
+                return "⇧"
+            case .control:
+                return "⌃"
+            case .commandOption:
+                return "⌘⌥"
+            case .commandShift:
+                return "⌘⇧"
+            case .commandControl:
+                return "⌘⌃"
+            }
+        }
+    }
 
     func saveBookmark(for url: URL, key: String) {
         do {
@@ -179,7 +234,7 @@ struct ContentView: View {
         VStack{
             // 添加一个 TextField 用于设置时间间隔
             HStack {
-                Text("Change Interval:")
+                Text("Switch Interval:")
                 TextField("Interval", value: $interval, formatter: NumberFormatter())
                     .frame(width: 100)
                 // 保存和加载时间间隔
@@ -192,36 +247,79 @@ struct ContentView: View {
                         UserDefaults.standard.setValue(newValue, forKey: "interval")
                     }
                 Text("seconds")
+                    .onReceive(timer) { _ in
+                        if countNum > 0{
+                            countNum -= 1
+                        }else{
+                            countNum = interval
+                            if colorScheme == .dark{
+                                if let url = DarkModeFolderURL{
+                                    DarkModeimageURLs = getImagesFromFolder(url: url)
+                                    setRandomDesktopImage(from: DarkModeimageURLs)
+                                }
+                            }else {
+                                if let url = LightModeFolderURL{
+                                    LightModeimageURLs = getImagesFromFolder(url: url)
+                                    setRandomDesktopImage(from: LightModeimageURLs)
+                                }
+                            }
+                            
+                        }
+                    }
             }
             
             //Text("\(countNum) seconds left to change the wallpaper")
-            Text("seconds left to change the wallpaper")
-                .onReceive(timer) { _ in
-                    if countNum > 0{
-                        countNum -= 1
-                    }else{
-                        countNum = interval
-                        if colorScheme == .dark{
-                            if let url = DarkModeFolderURL{
-                                DarkModeimageURLs = getImagesFromFolder(url: url)
-                                setRandomDesktopImage(from: DarkModeimageURLs)
-                            }
-                        }else {
-                            if let url = LightModeFolderURL{
-                                LightModeimageURLs = getImagesFromFolder(url: url)
-                                setRandomDesktopImage(from: LightModeimageURLs)
-                            }
-                        }
-                        
-                    }
-                }
-            
-            Button(action: {
-                countNum = 0 // 将 countNum 归零
-            }) {
-                Text("Reset Timer")
-            }
+            //Text("")
+                
         }.padding()
+        
+        
+            
+        VStack {
+            Button(action: {
+                countNum = 0
+            }) {
+                Text("Switch Wallpaper")
+            }
+            .keyboardShortcut(KeyEquivalent(resetShortcutKey), modifiers: selectedModifier.eventModifiers)
+            
+            HStack {
+                Picker("Shortcut", selection: $selectedModifier) {
+                    Text(ShortcutModifier.command.symbol).tag(ShortcutModifier.command)
+                    Text(ShortcutModifier.option.symbol).tag(ShortcutModifier.option)
+                    Text(ShortcutModifier.shift.symbol).tag(ShortcutModifier.shift)
+                    Text(ShortcutModifier.control.symbol).tag(ShortcutModifier.control)
+                    Text(ShortcutModifier.commandOption.symbol).tag(ShortcutModifier.commandOption)
+                    Text(ShortcutModifier.commandShift.symbol).tag(ShortcutModifier.commandShift)
+                    Text(ShortcutModifier.commandControl.symbol).tag(ShortcutModifier.commandControl)
+                }
+                // .labelsHidden() // 隐藏 Picker 默认标签
+                .frame(width: 80)
+
+                Text("\(selectedModifier.symbol)")
+                TextField("Key", text: Binding(
+                    get: { String(resetShortcutKey) },
+                    set: { newValue in
+                        if let first = newValue.first {
+                            resetShortcutKey = first
+                            saveShortcutPreferences()
+                        }
+                    }
+                ))
+                .frame(width: 50)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+            }
+        }
+        .onAppear {
+            if let savedKey = UserDefaults.standard.string(forKey: "ResetShortcutKey")?.first {
+                resetShortcutKey = savedKey
+            }
+            if let savedModifierRaw = UserDefaults.standard.integer(forKey: "ResetShortcutModifier") as Int?,
+               let savedModifier = ShortcutModifier(rawValue: savedModifierRaw) {
+                selectedModifier = savedModifier
+            }
+        }
+        .padding()
         
         Toggle("Show the same wallpaper on every display", isOn: $syncDesktops)
         .onAppear {
@@ -270,6 +368,11 @@ struct ContentView: View {
         } catch {
             print("Error setting desktop image: \(error)")
         }
+    }
+    
+    private func saveShortcutPreferences() {
+        UserDefaults.standard.set(String(resetShortcutKey), forKey: "ResetShortcutKey")
+        UserDefaults.standard.set(selectedModifier.rawValue, forKey: "ResetShortcutModifier")
     }
     
 }
