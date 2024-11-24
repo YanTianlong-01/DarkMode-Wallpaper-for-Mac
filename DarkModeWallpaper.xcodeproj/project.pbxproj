@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		893A2FA22C8366FE000E9BDE /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893A2FA12C8366FE000E9BDE /* MainView.swift */; };
 		89BE7A412C605C810047D703 /* DarkModeWallpaperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89BE7A402C605C810047D703 /* DarkModeWallpaperApp.swift */; };
 		89BE7A432C605C810047D703 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89BE7A422C605C810047D703 /* ContentView.swift */; };
 		89BE7A452C605C820047D703 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89BE7A442C605C820047D703 /* Assets.xcassets */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		893A2FA12C8366FE000E9BDE /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		89BE7A3D2C605C810047D703 /* DarkModeWallpaper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DarkModeWallpaper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89BE7A402C605C810047D703 /* DarkModeWallpaperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeWallpaperApp.swift; sourceTree = "<group>"; };
 		89BE7A422C605C810047D703 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -56,6 +58,7 @@
 				89BE7A512C61D9C80047D703 /* Info.plist */,
 				89BE7A402C605C810047D703 /* DarkModeWallpaperApp.swift */,
 				89BE7A422C605C810047D703 /* ContentView.swift */,
+				893A2FA12C8366FE000E9BDE /* MainView.swift */,
 				89BE7A442C605C820047D703 /* Assets.xcassets */,
 				89BE7A492C605C820047D703 /* DarkModeWallpaper.entitlements */,
 				89BE7A462C605C820047D703 /* Preview Content */,
@@ -142,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				89BE7A432C605C810047D703 /* ContentView.swift in Sources */,
+				893A2FA22C8366FE000E9BDE /* MainView.swift in Sources */,
 				89BE7A412C605C810047D703 /* DarkModeWallpaperApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,10 +278,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = DarkModeWallpaper/DarkModeWallpaper.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DarkModeWallpaper/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DarkModeWallpaper/Info.plist;
@@ -289,7 +295,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "-.DarkModeWallpaper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -304,10 +310,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = DarkModeWallpaper/DarkModeWallpaper.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DarkModeWallpaper/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DarkModeWallpaper/Info.plist;
@@ -319,7 +327,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "-.DarkModeWallpaper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
