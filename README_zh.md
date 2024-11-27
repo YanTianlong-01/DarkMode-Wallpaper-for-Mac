@@ -25,10 +25,10 @@
 - 用户可以设置更新频率，App会随机从指定文件夹中选择一张图片作为壁纸。
 - 允许手动切换壁纸，并且可以自定义快捷键
  
-<img width="307" alt="image" src="https://github.com/user-attachments/assets/88696d6e-4e27-447d-9847-d5c2c7e69392">
+<img width="307" alt="image" src="https://github.com/user-attachments/assets/9bf84ab4-d296-4441-bfbe-ebb5dc6fc322">
 
 ## 下载App
-- [下载](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.4/DarkModeWallpaper-1.0.4.zip)
+- [下载](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.6/DarkModeWallpaper-1.0.6.zip)
 - 推荐系统：macOS 14 及以上
 
 ## 其他解决方案
