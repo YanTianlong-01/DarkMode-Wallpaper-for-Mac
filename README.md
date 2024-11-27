@@ -28,12 +28,13 @@
 - Allow manual switching of the wallpaper and offer shortcut keys for the operation.
  
 
-<img width="307" alt="image" src="https://github.com/user-attachments/assets/88696d6e-4e27-447d-9847-d5c2c7e69392">
+<img width="307" alt="image" src="https://github.com/user-attachments/assets/9bf84ab4-d296-4441-bfbe-ebb5dc6fc322">
+
 
 
 
 ## Download
-- [download](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.4/DarkModeWallpaper-1.0.4.zip)
+- [download](https://github.com/YanTianlong-01/DarkMode-Wallpaper-for-Mac/releases/download/v1.0.6/DarkModeWallpaper-1.0.6.zip)
 - Recommended System: macOS 14 and above
 
 
