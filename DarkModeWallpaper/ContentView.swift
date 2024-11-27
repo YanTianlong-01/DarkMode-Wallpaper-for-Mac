@@ -2,13 +2,17 @@
 //  ContentView.swift
 //  DarkModeWallpaper
 //
-//  Created by 严天龙 on 2024/8/31.
-//  v1.0.1 与 v1.0.0 一样
+//  Created by 严天龙 on 2024/11/27.
+//  v1.0.6
 
 import SwiftUI
 import AppKit
+import KeyboardShortcuts
 
 struct ContentView: View {
+//    @ObservedObject var appState: AppState
+//    @EnvironmentObject var appState: AppState
+    @ObservedObject var appState = AppState.shared
     
     @State private var LightshowFolderPicker = false
     @State private var DarkshowFolderPicker = false
@@ -19,64 +23,11 @@ struct ContentView: View {
     @State private var imageURLs: [URL] = []
     //@State private var interval: TimeInterval = 1800 // 默认间隔时间为 30分钟
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State private var countNum: Int = 1800
+    // @State var countNum: Int = 1800
     @Environment(\.colorScheme) var colorScheme
     //@State private var syncDesktops: Bool = false
-    @State private var resetShortcutKey: Character = "r"
-    @State private var selectedModifier: ShortcutModifier = .command {
-        didSet {
-            saveShortcutPreferences()
-        }
-    }
+    
 
-    // Add custom enum for modifier keys
-    enum ShortcutModifier: Int, Hashable {
-        case command
-        case option
-        case shift
-        case control
-        case commandOption
-        case commandShift
-        case commandControl
-        
-        var eventModifiers: EventModifiers {
-            switch self {
-            case .command:
-                return .command
-            case .option:
-                return .option
-            case .shift:
-                return .shift
-            case .control:
-                return .control
-            case .commandOption:
-                return .command.union(.option)
-            case .commandShift:
-                return .command.union(.shift)
-            case .commandControl:
-                return .command.union(.control)
-            }
-        }
-        
-        var symbol: String {
-            switch self {
-            case .command:
-                return "⌘"
-            case .option:
-                return "⌥"
-            case .shift:
-                return "⇧"
-            case .control:
-                return "⌃"
-            case .commandOption:
-                return "⌘⌥"
-            case .commandShift:
-                return "⌘⇧"
-            case .commandControl:
-                return "⌘⌃"
-            }
-        }
-    }
 
     func saveBookmark(for url: URL, key: String) {
         do {
@@ -134,6 +85,7 @@ struct ContentView: View {
     }
 
     init() {
+        
         if let lightModeURL = restoreBookmark(key: "LightModeFolderBookmark") {
             self._LightModeFolderURL = State(initialValue: lightModeURL)
         }
@@ -248,10 +200,10 @@ struct ContentView: View {
                     }
                 Text("seconds")
                     .onReceive(timer) { _ in
-                        if countNum > 0{
-                            countNum -= 1
+                        if appState.countNum > 0{
+                            appState.countNum -= 1
                         }else{
-                            countNum = interval
+                            appState.countNum = interval
                             if colorScheme == .dark{
                                 if let url = DarkModeFolderURL{
                                     DarkModeimageURLs = getImagesFromFolder(url: url)
@@ -274,52 +226,13 @@ struct ContentView: View {
         }.padding()
         
         
-            
-        VStack {
             Button(action: {
-                countNum = 0
+                appState.countNum = 0
             }) {
                 Text("Switch Wallpaper")
-            }
-            .keyboardShortcut(KeyEquivalent(resetShortcutKey), modifiers: selectedModifier.eventModifiers)
-            
-            HStack {
-                Picker("Shortcut", selection: $selectedModifier) {
-                    Text(ShortcutModifier.command.symbol).tag(ShortcutModifier.command)
-                    Text(ShortcutModifier.option.symbol).tag(ShortcutModifier.option)
-                    Text(ShortcutModifier.shift.symbol).tag(ShortcutModifier.shift)
-                    Text(ShortcutModifier.control.symbol).tag(ShortcutModifier.control)
-                    Text(ShortcutModifier.commandOption.symbol).tag(ShortcutModifier.commandOption)
-                    Text(ShortcutModifier.commandShift.symbol).tag(ShortcutModifier.commandShift)
-                    Text(ShortcutModifier.commandControl.symbol).tag(ShortcutModifier.commandControl)
-                }
-                // .labelsHidden() // 隐藏 Picker 默认标签
-                .frame(width: 80)
-
-                Text("\(selectedModifier.symbol)")
-                TextField("Key", text: Binding(
-                    get: { String(resetShortcutKey) },
-                    set: { newValue in
-                        if let first = newValue.first {
-                            resetShortcutKey = first
-                            saveShortcutPreferences()
-                        }
-                    }
-                ))
-                .frame(width: 50)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            }
-        }
-        .onAppear {
-            if let savedKey = UserDefaults.standard.string(forKey: "ResetShortcutKey")?.first {
-                resetShortcutKey = savedKey
-            }
-            if let savedModifierRaw = UserDefaults.standard.integer(forKey: "ResetShortcutModifier") as Int?,
-               let savedModifier = ShortcutModifier(rawValue: savedModifierRaw) {
-                selectedModifier = savedModifier
-            }
-        }
-        .padding()
+            }.padding()
+        
+        KeyboardShortcuts.Recorder("Switch Wallpaper:", name: .switchWallpaper)
         
         Toggle("Show the same wallpaper on every display", isOn: $syncDesktops)
         .onAppear {
@@ -334,6 +247,7 @@ struct ContentView: View {
         
     
     }
+
     
     
     func getImagesFromFolder(url: URL) -> [URL] {
@@ -358,6 +272,7 @@ struct ContentView: View {
                 let screens = NSScreen.screens // 获取所有屏幕
                 for screen in screens {
                     // print(screen)
+                    print("switch")
                     try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
                 }
             }else{
@@ -370,10 +285,7 @@ struct ContentView: View {
         }
     }
     
-    private func saveShortcutPreferences() {
-        UserDefaults.standard.set(String(resetShortcutKey), forKey: "ResetShortcutKey")
-        UserDefaults.standard.set(selectedModifier.rawValue, forKey: "ResetShortcutModifier")
-    }
+
     
 }
 
